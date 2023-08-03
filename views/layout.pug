@@ -3,11 +3,11 @@ html
   head
     title= title
     link(rel='stylesheet' href='/stylesheets/style.css')
-    link(href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous")
-
+    link(href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous") 
+    script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js")
   body
     header 
-      nav.navbar.navbar-expand-lg.bg-body-tertiary
+      nav.navbar.navbar-expand-lg.navbar-dark.bg-dark
         .container-fluid
           a.navbar-brand(href='/') Sports Shop
           button.navbar-toggler(type='button' data-bs-toggle='collapse' data-bs-target='#navbarTogglerDemo02' aria-controls='navbarTogglerDemo02' aria-expanded='false' aria-label='Toggle navigation')
@@ -18,7 +18,9 @@ html
                 li.nav-item
                   a.nav-link.active(aria-current='page' href='/') Home
                 li.nav-item
-                  a.nav-link(href='/signout') Sign Out
+                  a.nav-link(href='/account') Account
+                li.nav-item
+                  a.nav-link(href='/signout') Sign Out 
               else
                 li.nav-item
                   a.nav-link.active(aria-current='page' href='/') Home
@@ -33,5 +35,6 @@ html
     footer
       .container 
         p.text-center Todos los derechos reservados
-
+ 
     script(src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous")
+

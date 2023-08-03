@@ -10,11 +10,12 @@ if (process.env.NODE_ENV !== 'production') {
 var indexRouter = require('./routes/index');
 var signinRouter = require('./routes/signin');
 var signupRouter = require('./routes/signup');
-var signoutRouter = require('./routes/signout'); 
+var signoutRouter = require('./routes/signout');
+var accountRouter = require('./routes/account');
 
 // Set up axios
-var axios = require('axios'); 
-axios.defaults.baseURL = process.env.AXIOS_BASE_URL 
+var axios = require('axios');
+axios.defaults.baseURL = process.env.AXIOS_BASE_URL
 
 var app = express();
 
@@ -25,6 +26,7 @@ app.use(session({
   secret: 'secret',
   resave: false,
   saveUninitialized: false,
+  data: {}
 }));
 
 // view engine setup
@@ -41,6 +43,7 @@ app.use('/', indexRouter);
 app.use('/signin', signinRouter);
 app.use('/signup', signupRouter);
 app.use('/signout', signoutRouter);
+app.use('/account', accountRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

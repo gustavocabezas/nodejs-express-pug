@@ -1,0 +1,49 @@
+extends layout
+
+block content 
+
+  legend= title
+  form(method='post' id='myForm').needs-validation
+
+    div.text-center
+      if avatar
+        img#avatar.rounded-circle.mx-auto.d-block(style='width:250px; height:250px;' src=avatar alt="avatar")
+      else
+        img#avatar.rounded-circle.mx-auto.d-block(style='width:250px; height:250px;' src="https://picsum.photos/1200/1200?random=50" alt="avatar")
+
+      br
+      input(type='file' id='imageUpload' style='display: none;')
+      button.btn.btn-primary(type='button' id='updateButton') Actualizar foto
+
+    input(type='hidden' id='avatarInput' name='avatar')
+
+    .mb-3
+      label.form-label(for='email') Email address
+      input.form-control(type='email' id='email' name='email' aria-describedby='email' value=primaryEmail)
+    .mb-3
+      label.form-label(for='password') Password
+      input.form-control(type='password' id='password' name='password')
+    .mb-3.form-check
+      input.form-check-input(type='checkbox' id='exampleCheck1')
+      label.form-check-label(for='exampleCheck1') Check me out
+    .d-inline-flex.gap-3
+      button.btn.btn-primary(type='submit') Submit
+
+  script.
+    $(document).ready(function() { 
+
+      $('#updateButton').click(function() {
+        $('#imageUpload').click();
+      });
+
+      $('#imageUpload').change(function() {
+        if (this.files && this.files[0]) {  
+          var reader = new FileReader();
+          reader.onload = function(e) {
+            $('#avatar').attr('src', e.target.result);  
+            $('#avatarInput').val(e.target.result);
+          }
+          reader.readAsDataURL(this.files[0]);
+        }
+      }); 
+    });
