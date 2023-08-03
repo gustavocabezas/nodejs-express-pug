@@ -1,0 +1,22 @@
+extends layout
+
+block content 
+
+  form(method='post').needs-validation
+    legend= title
+    .mb-3
+      label.form-label(for='email') Email address
+      input.form-control(type='email' id='email' name='email' aria-describedby='email')
+      #emailHelp.form-text We'll never share your email with anyone else.
+    .mb-3
+      label.form-label(for='password') Password
+      input.form-control(type='password' name="password" id='password')
+    .mb-3.form-check
+      input.form-check-input(type='checkbox' id='exampleCheck1')
+      label.form-check-label(for='exampleCheck1') Check me out
+    if error
+      .mb-3
+        p.alert.alert-danger #{error}
+    .d-inline-flex.gap-3
+      button.btn.btn-primary(type='submit') Submit
+      a.btn.btn-secondary(href='/signup') Sign Up 

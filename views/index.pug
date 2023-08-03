@@ -1,0 +1,17 @@
+extends layout
+
+block content 
+    h1= title
+    p Welcome to #{title}
+
+    .row.row-cols-1.row-cols-md-3.g-4
+      each card in cards
+        .col
+          .card.h-100
+            img.card-img-top(src=card.image, alt=card.title)
+            .card-body
+              h5.card-title= card.title
+              p.card-text= card.text
+            .card-footer
+              .btn.btn-primary.w-100  Buy
+
