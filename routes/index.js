@@ -28,7 +28,8 @@ let cards = [
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
-  res.render('index', { title: 'Sports Shop', authenticated: req.session.authenticated, cards: cards });
+  let authenticated = !!req.cookies.authenticationString;
+  res.render('index', { title: 'Sports Shop', authenticated: authenticated, cards: cards });
 });
 
 module.exports = router;

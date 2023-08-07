@@ -18,17 +18,7 @@ var axios = require('axios');
 axios.defaults.baseURL = process.env.AXIOS_BASE_URL
 
 var app = express();
-
-// Auth
-const session = require('express-session');
-
-app.use(session({
-  secret: 'secret',
-  resave: false,
-  saveUninitialized: false,
-  data: {}
-}));
-
+ 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
@@ -40,6 +30,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
+app.use('/home', indexRouter);
 app.use('/signin', signinRouter);
 app.use('/signup', signupRouter);
 app.use('/signout', signoutRouter);

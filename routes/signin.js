@@ -3,19 +3,19 @@ var router = express.Router();
 const axios = require('axios');
 
 router.get('/', function (req, res, next) {
-    res.render('signin', { title: 'Sign In', authenticated: req.session.authenticated });
+    let authenticated = !!req.cookies.authenticationString;
+    res.render('signin', { title: 'Sign In', authenticated: authenticated });
 });
 
 router.post('/', async function (req, res, next) {
-    try {
+    try { 
         const apiResponse = await axios.post('/security/authenticate', {
             primaryEmail: req.body.email,
             password: req.body.password
-        });
-
+        }); 
         if (apiResponse.status == 200) {
-            req.session.authenticated = true;
-            req.session.data = apiResponse.data;
+            const authenticationString = JSON.stringify(apiResponse.data);
+            res.cookie('authenticationString', authenticationString, { httpOnly: true });
             res.redirect('/');
         } else {
             res.render('signin', {

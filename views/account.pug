@@ -11,9 +11,12 @@ block content
       else
         img#avatar.rounded-circle.mx-auto.d-block(style='width:250px; height:250px;' src="https://picsum.photos/1200/1200?random=50" alt="avatar")
 
-      br
-      input(type='file' id='imageUpload' style='display: none;')
-      button.btn.btn-primary(type='button' id='updateButton') Actualizar foto
+      br 
+      input(type='file' id='imageUpload' name='imageUpload' style='display: none;') 
+
+      .mb-3  
+        label.form-label(for='formFile') Avatar
+        input.form-control(type='file' id='formFile' onchange='previewImage()')
 
     input(type='hidden' id='avatarInput' name='avatar')
 
@@ -30,20 +33,44 @@ block content
       button.btn.btn-primary(type='submit') Submit
 
   script.
+    function previewImage() {
+      const file = document.getElementById('formFile').files[0];
+      const reader = new FileReader();
+
+      reader.onloadend = function() {
+        document.getElementById('avatar').src = reader.result;
+      }
+
+      if (file) {
+        reader.readAsDataURL(file);
+      } else {
+        document.getElementById('avatar').src = "";
+      }
+    }
+
     $(document).ready(function() { 
+      $("#myForm").on('submit', function(event) {
+        event.preventDefault();
 
-      $('#updateButton').click(function() {
-        $('#imageUpload').click();
-      });
+        let formData = new FormData();
+        formData.append('avatar', $('#formFile')[0].files[0]);
+        formData.append('email', $('#email').val());
+        formData.append('password', $('#password').val());
 
-      $('#imageUpload').change(function() {
-        if (this.files && this.files[0]) {  
-          var reader = new FileReader();
-          reader.onload = function(e) {
-            $('#avatar').attr('src', e.target.result);  
-            $('#avatarInput').val(e.target.result);
+        $.ajax({
+          type: "PUT",
+          url: "/account",
+          data: formData,
+          processData: false,
+          contentType: false,
+          success: function(data) {
+            alert("Image Uploaded Successfully!");
+            $('#avatar').attr('src', URL.createObjectURL($('#formFile')[0].files[0]));
+          },
+          error: function(jqXHR, textStatus, errorMessage) {
+            console.log(errorMessage); 
           }
-          reader.readAsDataURL(this.files[0]);
-        }
-      }); 
+        });
+      });
     });
+

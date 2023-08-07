@@ -3,7 +3,8 @@ var router = express.Router();
 const axios = require('axios');
 
 router.get('/', function (req, res, next) {
-    res.render('signup', { title: 'Sign Up', authenticated: req.session.authenticated });
+    let authenticated = !!req.cookies.authenticationString;
+    res.render('signup', { title: 'Sign Up', authenticated: authenticated });
 });
 
 router.post('/', async function (req, res, next) {
@@ -12,9 +13,8 @@ router.post('/', async function (req, res, next) {
             primaryEmail: req.body.email,
             password: req.body.password
         });
-
-        console.log(apiResponse);
-        if (apiResponse.status = 200) {
+        
+        if (apiResponse.status == 200) {
             res.redirect('/signin');
         } else {
             res.render('signup', {

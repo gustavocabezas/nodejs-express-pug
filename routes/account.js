@@ -1,69 +1,70 @@
 var express = require('express');
 var router = express.Router();
 const axios = require('axios');
+const multer = require('multer');
+
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 
 router.get('/', async function (req, res, next) {
     try {
+        let authenticated = !!req.cookies.authenticationString;
+        let userCookie = JSON.parse(req.cookies.authenticationString);
 
-        console.log(req.session);
+        const apiResponse = await axios.get('/users/' + userCookie.id);
 
-        const apiResponse = await axios.get('/users/' + req.session.data.id);
-
-        if (apiResponse.status === 200) {
-            res.render('account', {
-                title: 'Account',
-                authenticated: req.session.authenticated,
-                primaryEmail: req.session.data.primaryEmail,
-                avatar: apiResponse.data.avatar ? 'data:image/png;base64,' + apiResponse.data.avatar.toString('base64') : null
-            });
-        } else {
-            res.render('account', {
-                title: 'Account',
-                authenticated: false,
-                primaryEmail: req.session.data.primaryEmail,
-                error: 'An error occurred while fetching user data'
-            });
+        if (apiResponse.status !== 200) {
+            return res.redirect('/signin');
         }
-    } catch (error) {
-        console.log(error);
+
+        let base64Image = null;
+
+        if (apiResponse.data.avatar) {
+            const buffer = Buffer.from(apiResponse.data.avatar.data);
+            base64Image = 'data:image/png;base64,' + buffer.toString('base64');
+        }
+
         res.render('account', {
             title: 'Account',
-            authenticated: false,
-            error: 'An error occurred while fetching user data'
+            authenticated: authenticated,
+            primaryEmail: apiResponse.data.primaryEmail,
+            avatar: base64Image
         });
+    } catch (error) {
+        console.log("Error:", error);
+        res.redirect('/signin');
     }
 });
 
-router.post('/', async function (req, res, next) {
+router.put('/', upload.single('avatar'), async (req, res) => {
     try {
-        let avatar = null;
+        let userCookie = JSON.parse(req.cookies.authenticationString);
+        const file = req.file;
+        let updatedUser;
 
-        if (req.body.avatar) {
-            try {
-                avatar = Buffer.from(req.body.avatar.split(",")[1], 'base64');
-            } catch (error) {
-                console.log('Failed to process avatar data:', error);
-            }
+        if (!file) {
+            updatedUser = {
+                primaryEmail: req.body.email
+            };
+        } else {
+            updatedUser = {
+                primaryEmail: req.body.email,
+                avatar: file.buffer
+            };
         }
 
-        const updatedUser = {
-            primaryEmail: req.body.email,
-            avatar: avatar
-        };
+        const apiResponse = await axios.put('/users/' + userCookie.id, updatedUser);
 
-        const apiResponse = await axios.put('/users/' + req.session.data.id, updatedUser);
-
-        console.log(apiResponse);
-
-        if (apiResponse.status === 200) {
-            res.redirect('/signin');
-        } else {
+        console.log(apiResponse.status);
+        /* if (apiResponse.status == 200) { */
+        res.redirect('/');
+        /* } else {
             res.render('account', {
                 title: 'Account',
                 authenticated: false,
                 error: 'An error occurred while updating user data'
             });
-        }
+        } */
 
     } catch (error) {
         console.log(error);
