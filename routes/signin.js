@@ -9,10 +9,12 @@ router.get('/', function (req, res, next) {
 
 router.post('/', async function (req, res, next) {
     try { 
+        console.log("Entro en el post");
         const apiResponse = await axios.post('/security/authenticate', {
             primaryEmail: req.body.email,
             password: req.body.password
         }); 
+        console.log(apiResponse);
         if (apiResponse.status == 200) {
             const authenticationString = JSON.stringify(apiResponse.data);
             res.cookie('authenticationString', authenticationString, { httpOnly: true });
