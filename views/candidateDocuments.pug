@@ -1,0 +1,48 @@
+extends layout
+
+block content
+    h1= title
+
+    if candidateDocument
+        form(method='post' enctype='multipart/form-data')
+            .mb-3
+                label.form-label ID: #{candidateDocument._id}
+            .mb-3
+                label.form-label CandidateId: #{candidateDocument._id}
+            .mb-1
+                label.form-label(for='PresentationLetter') Presentation Letter
+            .mb-1
+                a(href=`/candidateDocuments/download/presentationLetter/${candidateDocument._id}`) Download Presentation Letter
+            .mb-3
+                input.mt-1(type='file' name='PresentationLetter' accept='.pdf')
+            .mb-1
+                label.form-label(for='Curriculum') Curriculum
+            .mb-1
+                a(href=`/candidateDocuments/download/curriculum/${candidateDocument._id}`) Download Curriculum
+            .mb-3
+                input(type='file' name='Curriculum' accept='.pdf')
+                
+            .d-inline-flex.gap-3
+                button.btn.btn-primary(type='submit') Delete
+                button.btn.btn-primary(type='submit') Update
+
+    if candidateDocuments
+        table.table
+            thead
+                tr
+                    th ID
+                    th CandidateId
+                    th PresentationLetter
+                    th Curriculum
+                    th Actions
+            tbody
+                each document in candidateDocuments
+                    tr
+                        td= document._id
+                        td= document.candidateId
+                        td
+                            a(href=`/candidateDocuments/download/presentationLetter/${document._id}`) Download 
+                        td
+                            a(href=`/candidateDocuments/download/curriculum/${document._id}`) Download
+                        td
+                            a.btn.btn-primary(href=`/candidateDocuments/${document._id}`) Edit

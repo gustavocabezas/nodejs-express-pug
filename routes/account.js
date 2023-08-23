@@ -56,15 +56,7 @@ router.put('/', upload.single('avatar'), async (req, res) => {
         const apiResponse = await axios.put('/users/' + userCookie.id, updatedUser);
 
         console.log(apiResponse.status);
-        /* if (apiResponse.status == 200) { */
         res.redirect('/');
-        /* } else {
-            res.render('account', {
-                title: 'Account',
-                authenticated: false,
-                error: 'An error occurred while updating user data'
-            });
-        } */
 
     } catch (error) {
         console.log(error);

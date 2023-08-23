@@ -1,0 +1,63 @@
+extends layout
+
+block content
+    h1= title 
+
+    form(method='post' id='myFormJobs').needs-validation
+
+        .mb-3
+            label.form-label(for='jobId') Job ID
+            div(id='jobId')= job.Id
+
+        .mb-3
+            label.form-label(for='title') Title
+            div(id='title')= job.Title
+
+        .mb-3
+            label.form-label(for='Description') Description
+            div= job.Description
+
+        .mb-3
+            label.form-label(for='Description') Location
+            div= job.Location 
+
+        .mb-3
+            label.form-label(for='Salary') Salary
+            div= job.Salary
+
+        .mb-3
+            label.form-label(for='presentationLetter') Presentation Letter
+            input.form-control(type='file' id='presentationLetter')
+
+        .mb-3
+            label.form-label(for='curriculum') Curriculum
+            input.form-control(type='file' id='curriculum')
+
+        button.btn.btn-primary(type='submit') Submit
+
+    script.
+        $(document).ready(function() { 
+            $("#myFormJobs").on('submit', function(event) {
+                event.preventDefault();
+
+                let formData = new FormData();
+                const jobIdValue = $('#jobId').text();
+                formData.append('presentationLetter', $('#presentationLetter')[0].files[0]);
+                formData.append('curriculum', $('#curriculum')[0].files[0]);
+
+                $.ajax({
+                    type: "POST",
+                    url: `/jobDetails/${jobIdValue}`,
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(data) {
+                        alert("Files Uploaded Successfully!");
+                    },
+                    error: function(jqXHR, textStatus, errorMessage) {
+                        console.log(errorMessage); 
+                    }
+                });
+            });
+        });
+

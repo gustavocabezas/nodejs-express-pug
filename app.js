@@ -12,13 +12,16 @@ var signinRouter = require('./routes/signin');
 var signupRouter = require('./routes/signup');
 var signoutRouter = require('./routes/signout');
 var accountRouter = require('./routes/account');
+var jobsRouter = require('./routes/jobs');
+var jobDetailsRouter = require('./routes/jobDetails');
+var candidateDocumentsRouter = require('./routes/candidateDocuments');
 
 // Set up axios
 var axios = require('axios');
 axios.defaults.baseURL = process.env.AXIOS_BASE_URL
 
 var app = express();
- 
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
@@ -35,6 +38,9 @@ app.use('/signin', signinRouter);
 app.use('/signup', signupRouter);
 app.use('/signout', signoutRouter);
 app.use('/account', accountRouter);
+app.use('/jobs', jobsRouter);
+app.use('/jobDetails', jobDetailsRouter);
+app.use('/candidateDocuments', candidateDocumentsRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

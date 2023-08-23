@@ -1,0 +1,22 @@
+extends layout
+
+block content
+    h1= title
+
+    table.table
+        thead
+            tr
+                th ID
+                th Título
+                th Description
+                th Salary
+                th Acciones
+        tbody
+            each job in jobs
+                tr
+                    td= job.Id
+                    td= job.Title
+                    td= job.Description
+                    td= job.Salary
+                    td 
+                        a.btn.btn-primary(href=`/jobDetails/${job.Id}`) Ver detalles 
