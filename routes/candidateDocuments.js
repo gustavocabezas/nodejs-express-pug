@@ -7,6 +7,7 @@ const upload = multer({ storage: storage });
 
 router.get('/', async function (req, res, next) {
     try {
+        let authenticated = !!req.cookies.authenticationString;
         const apiResponse = await axios.get('/candidateDocuments');
 
         if (apiResponse.status !== 200) {
@@ -16,6 +17,7 @@ router.get('/', async function (req, res, next) {
         const candidateDocumentsList = apiResponse.data;
 
         res.render('candidateDocuments', {
+            authenticated: authenticated,
             title: 'Candidate Documents',
             candidateDocuments: candidateDocumentsList
         });
@@ -55,25 +57,45 @@ router.get('/:candidateDocumentId', async function (req, res, next) {
 router.post('/:candidateDocumentId', upload.fields([{ name: 'PresentationLetter', maxCount: 1 }, { name: 'Curriculum', maxCount: 1 }]), async (req, res) => {
     try {
         const candidateDocumentId = req.params.candidateDocumentId;
+        const action = req.body.action;
         const updatedFields = {};
 
-        if (req.files != undefined) {
-            if (req.files.PresentationLetter) {
-                updatedFields.presentationLetter = req.files.PresentationLetter[0].buffer;
+        if (action === 'Update') {
+
+            if (req.files != undefined) {
+                if (req.files.PresentationLetter) {
+                    updatedFields.presentationLetter = req.files.PresentationLetter[0].buffer;
+                }
+
+                if (req.files.Curriculum) {
+                    updatedFields.curriculum = req.files.Curriculum[0].buffer;
+                }
             }
 
-            if (req.files.Curriculum) {
-                updatedFields.curriculum = req.files.Curriculum[0].buffer;
-            }
+            console.log("\nupdatedFields.presentationLetter:", updatedFields.presentationLetter);
+            console.log("\nupdatedFields.curriculum:", updatedFields.curriculum);
+
+            const apiResponse = await axios.put(`/candidateDocuments/${candidateDocumentId}`, updatedFields);
+            console.log("\napiResponse data:", apiResponse.data);
+
+        } else if (action === 'Delete') {
+
+            const apiResponse = await axios.delete(`/candidateDocuments/${candidateDocumentId}`);
+            console.log("\napiResponse data:", apiResponse.data);
+
         }
 
-        console.log("\nupdatedFields.presentationLetter:", updatedFields.presentationLetter);
-        console.log("\nupdatedFields.curriculum:", updatedFields.curriculum);
-
-        const apiResponse = await axios.put(`/candidateDocuments/${candidateDocumentId}`, updatedFields);
-        console.log("\napiResponse data:", apiResponse.data);
-
         res.redirect('/candidateDocuments');
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+router.post('/jobDocuments', async (req, res) => {
+    try {
+        console.log("\nEntry in /jobDocument/:candidateDocumentId", req.body);
+        const apiResponse = await axios.post(`/candidateDocuments`, updatedFields);
+        console.log("\napiResponse data:", apiResponse.data); 
     } catch (error) {
         console.log(error);
     }
@@ -93,7 +115,7 @@ router.get('/download/presentationLetter/:candidateDocumentId', async (req, res)
             return res.status(404).send('No presentation letter found');
         }
 
-        const presentationLetterBuffer = Buffer.from(candidateDocument.presentationLetter.data); 
+        const presentationLetterBuffer = Buffer.from(candidateDocument.presentationLetter.data);
         res.setHeader('Content-Type', 'application/pdf');
         res.setHeader('Content-Disposition', 'attachment; filename=presentationLetter.pdf');
         res.send(presentationLetterBuffer);
@@ -119,7 +141,7 @@ router.get('/download/curriculum/:candidateDocumentId', async (req, res) => {
             return res.status(404).send('No curriculum found');
         }
 
-        const curriculumBuffer = Buffer.from(candidateDocument.curriculum.data); 
+        const curriculumBuffer = Buffer.from(candidateDocument.curriculum.data);
         res.setHeader('Content-Type', 'application/pdf');
         res.setHeader('Content-Disposition', 'attachment; filename=curriculum.pdf');
         res.send(curriculumBuffer);

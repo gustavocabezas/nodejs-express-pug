@@ -4,6 +4,7 @@ const axios = require('axios');
 
 router.get('/', async function (req, res, next) {
     try {
+        let authenticated = !!req.cookies.authenticationString;
         const apiResponse = await axios.get('/jobs');
 
         if (apiResponse.status !== 200) {
@@ -13,6 +14,7 @@ router.get('/', async function (req, res, next) {
         const jobList = apiResponse.data;
 
         res.render('jobs', {
+            authenticated: authenticated,
             title: 'Jobs',
             jobs: jobList
         });

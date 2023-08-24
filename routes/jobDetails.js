@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-const axios = require('axios'); 
+const axios = require('axios');
 const multer = require('multer');
 
 const storage = multer.memoryStorage();
@@ -8,7 +8,8 @@ const upload = multer({ storage: storage });
 
 router.get('/:jobId', async function (req, res, next) {
     try {
-        const jobId = req.params.jobId; 
+        let authenticated = !!req.cookies.authenticationString;
+        const jobId = req.params.jobId;
 
         const apiResponse = await axios.get(`/jobs/${jobId}`);
 
@@ -19,6 +20,7 @@ router.get('/:jobId', async function (req, res, next) {
         const job = apiResponse.data[0];
         console.log(job);
         res.render('jobDetails', {
+            authenticated: authenticated,
             title: 'Job Details',
             job: job
         });
@@ -32,8 +34,8 @@ router.post('/:jobId', upload.fields([{ name: 'presentationLetter', maxCount: 1 
     try {
         const jobId = req.params.jobId;
         let userCookie = JSON.parse(req.cookies.authenticationString);
-        const presentationLetterFile = req.files.presentationLetter ? req.files.presentationLetter[0] : null;
-        const curriculumFile = req.files.curriculum ? req.files.curriculum[0] : null;
+        const presentationLetterFile = req.files.presentationLetter ? req.files.presentationLetter[0].buffer : null;
+        const curriculumFile = req.files.curriculum ? req.files.curriculum[0].buffer : null;
 
         if (!presentationLetterFile || !curriculumFile) {
             throw new Error("Both files must be provided.");
@@ -41,8 +43,8 @@ router.post('/:jobId', upload.fields([{ name: 'presentationLetter', maxCount: 1 
 
         const candidateDocumentData = {
             candidateId: userCookie.id,
-            presentationLetter: presentationLetterFile.buffer,
-            curriculum: curriculumFile.buffer,
+            presentationLetter: presentationLetterFile,
+            curriculum: curriculumFile,
             dateCreated: new Date()
         };
 
@@ -65,7 +67,7 @@ router.post('/:jobId', upload.fields([{ name: 'presentationLetter', maxCount: 1 
             }
         }
 
-        res.redirect('/');
+        res.redirect('/jobs');
 
     } catch (error) {
         console.log(error);
